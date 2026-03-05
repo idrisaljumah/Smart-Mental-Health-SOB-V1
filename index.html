@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health Services - SOP Audit</title>
+    <style>
+        /* Modern Lavender Color Palette */
+        :root {
+            --primary: #7e57c2;
+            --primary-light: #b39ddb;
+            --primary-dark: #512da8;
+            --bg-color: #f6f4fa;
+            --surface: #ffffff;
+            --text-main: #322f3d;
+            --text-muted: #6b6776;
+            --border: #e2dcf0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+
+        body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; }
+
+        /* App Header - Hidden during print */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white; padding: 2.5rem 2rem; text-align: center;
+            box-shadow: 0 4px 12px rgba(126, 87, 194, 0.2);
+        }
+        header h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.5px; }
+        header p { font-size: 1.1rem; opacity: 0.9; font-weight: 300; }
+
+        .container { max-width: 1000px; margin: 2rem auto; padding: 0 1.5rem; }
+
+        /* Cards */
+        .card {
+            background: var(--surface); border-radius: var(--radius); padding: 2rem;
+            margin-bottom: 2rem; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--border);
+        }
+
+        /* Form Inputs */
+        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 1rem; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-weight: 600; margin-bottom: 0.5rem; color: var(--primary-dark); font-size: 0.95rem; }
+        .form-group select, .form-group input[type="text"] {
+            padding: 0.85rem; border: 2px solid var(--border); border-radius: 8px;
+            font-size: 1rem; outline: none; transition: all 0.2s ease; background: #faf9fccf;
+        }
+        .form-group select:focus, .form-group input[type="text"]:focus { border-color: var(--primary); background: var(--surface); box-shadow: 0 0 0 3px rgba(126, 87, 194, 0.1); }
+
+        /* Section Titles */
+        .section-title { color: var(--primary-dark); font-size: 1.4rem; border-bottom: 2px solid var(--border); padding-bottom: 0.75rem; margin-bottom: 1.5rem; }
+        .subsection-title { color: var(--text-main); font-size: 1.1rem; margin: 1.5rem 0 1rem 0; font-weight: 600; }
+
+        /* Enhanced Custom Segmented Controls (Radio Buttons) */
+        .question-row { display: flex; flex-direction: column; gap: 0.75rem; padding: 1.25rem 0; border-bottom: 1px dashed var(--border); }
+        .question-row:last-child { border-bottom: none; }
+        .question-text { font-weight: 500; font-size: 1rem; color: #4a4655; }
+        
+        .segmented-control { display: inline-flex; background: #f1eff5; border-radius: 8px; padding: 4px; gap: 4px; width: fit-content; }
+        .segmented-control label { cursor: pointer; position: relative; }
+        .segmented-control input { display: none; }
+        .segment-btn {
+            display: inline-block; padding: 0.5rem 1rem; font-size: 0.9rem; font-weight: 600;
+            color: var(--text-muted); border-radius: 6px; transition: all 0.2s; user-select: none;
+        }
+        
+        /* Radio Button Active States */
+        .segmented-control input[value="2"]:checked + .segment-btn { background: var(--success); color: white; box-shadow: 0 2px 5px rgba(16, 185, 129, 0.3); }
+        .segmented-control input[value="1"]:checked + .segment-btn { background: var(--warning); color: white; box-shadow: 0 2px 5px rgba(245, 158, 11, 0.3); }
+        .segmented-control input[value="0"]:checked + .segment-btn { background: var(--danger); color: white; box-shadow: 0 2px 5px rgba(239, 68, 68, 0.3); }
+        .segmented-control input[value="NA"]:checked + .segment-btn { background: var(--text-muted); color: white; }
+
+        /* Drugs Grid */
+        .drugs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+        .drug-item {
+            background: #faf9fc; padding: 0.85rem 1rem; border-radius: 8px; border: 1px solid var(--border);
+            display: flex; align-items: center; gap: 1rem; cursor: pointer; transition: 0.2s;
+        }
+        .drug-item:hover { border-color: var(--primary-light); background: var(--surface); }
+        .drug-item input[type="checkbox"] { width: 1.2rem; height: 1.2rem; accent-color: var(--primary); cursor: pointer; }
+
+        /* Buttons */
+        .btn {
+            display: block; width: 100%; padding: 1.2rem; background: var(--primary);
+            color: white; text-align: center; border: none; border-radius: var(--radius);
+            font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(126, 87, 194, 0.3); margin-top: 2rem;
+        }
+        .btn:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(126, 87, 194, 0.4); }
+        .btn-secondary { background: var(--text-main); box-shadow: 0 4px 10px rgba(50, 47, 61, 0.2); margin-top: 1rem; }
+        .btn-secondary:hover { background: #1a1820; box-shadow: 0 6px 15px rgba(50, 47, 61, 0.3); }
+
+        /* Smart Report Section */
+        #report-section { display: none; margin-top: 3rem; animation: fadeIn 0.5s ease; }
+        
+        .report-header { text-align: center; margin-bottom: 2rem; border-bottom: 2px solid var(--primary); padding-bottom: 1.5rem; }
+        .report-logo { max-height: 120px; width: auto; margin-bottom: 1rem; }
+        
+        .score-dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
+        .score-card { background: var(--surface); border-radius: var(--radius); padding: 1.5rem; text-align: center; border: 1px solid var(--border); }
+        .score-val { font-size: 3rem; font-weight: 800; color: var(--primary); line-height: 1; margin-bottom: 0.5rem; }
+        .score-label { font-size: 0.95rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+        .report-block { margin-bottom: 1.5rem; background: #fff; border-radius: 8px; border-left: 5px solid var(--warning); padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .report-block.excellence { border-left-color: var(--success); }
+        .report-block h3 { margin-bottom: 1rem; font-size: 1.1rem; color: var(--text-main); }
+        .report-list { list-style: none; }
+        .report-list li { position: relative; padding-left: 1.5rem; margin-bottom: 0.75rem; font-size: 0.95rem; }
+        .report-list li::before { content: "•"; color: var(--warning); position: absolute; left: 0; font-weight: bold; font-size: 1.2rem; line-height: 1; }
+        .excellence .report-list li::before { color: var(--success); content: "✓"; font-size: 1rem; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- PRINT ONLY STYLES --- */
+        @media print {
+            body { background: white; margin: 0; padding: 0; color: black; }
+            /* Hide the form, header, and buttons */
+            header, #audit-form, .btn { display: none !important; }
+            
+            /* Show only the report */
+            #report-section { display: block !important; margin: 0; width: 100%; box-shadow: none; animation: none; }
+            .container { max-width: 100%; margin: 0; padding: 0; }
+            
+            /* Force background colors for the score cards to print correctly */
+            .score-card { border: 1px solid #ddd !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .report-block { box-shadow: none; border: 1px solid #eee; border-left: 5px solid #ccc; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .report-block.excellence { border-left-color: #10b981; }
+            .report-block:not(.excellence) { border-left-color: #f59e0b; }
+            
+            @page { margin: 1cm; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .segmented-control { flex-wrap: wrap; }
+            .segment-btn { flex: 1; text-align: center; }
+            .score-dashboard { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Mental Health Services</h1>
+        <p>SOP Compliance Audit Checklist</p>
+    </header>
+
+    <div class="container">
+        <form id="audit-form">
+            <div class="card">
+                <h2 class="section-title">Facility Information</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="region">Region</label>
+                        <input type="text" id="region" value="Dhofar" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="wilayat">Wilayat</label>
+                        <select id="wilayat" required>
+                            <option value="">Select Wilayat...</option>
+                            <option value="Al Mazyunah">Al Mazyunah</option>
+                            <option value="Dhalqut">Dhalqut</option>
+                            <option value="Mirbat">Mirbat</option>
+                            <option value="Muqshin">Muqshin</option>
+                            <option value="Rakhyut">Rakhyut</option>
+                            <option value="Sadah">Sadah</option>
+                            <option value="Salalah">Salalah</option>
+                            <option value="Shalim">Shalim</option>
+                            <option value="Taqah">Taqah</option>
+                            <option value="Thumrayt">Thumrayt</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="institution">Institution</label>
+                        <select id="institution" required>
+                            <option value="">Select Institution...</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div id="checklist-container"></div>
+            
+            <div class="card">
+                <h2 class="section-title">Approved Drug List 2019 Availability</h2>
+                <div id="drugs-container" class="drugs-grid"></div>
+            </div>
+
+            <button type="button" class="btn" onclick="generateReport()">Generate Audit Report</button>
+        </form>
+
+        <div id="report-section">
+            <div class="report-header">
+                <img src="moh-logo.png" alt="MOH Logo" class="report-logo" onerror="this.style.display='none';">
+                <h1 style="color: var(--primary-dark); margin-bottom: 0.5rem;">Mental Health SOP Audit Report</h1>
+                <p id="report-facility-info" style="font-size: 1.2rem; color: var(--text-muted);"></p>
+                <p id="report-date" style="font-size: 0.9rem; color: #999; margin-top: 0.5rem;"></p>
+            </div>
+
+            <div class="score-dashboard">
+                <div class="score-card">
+                    <div class="score-val" id="total-score">0/0</div>
+                    <div class="score-label">Total Points Achieved</div>
+                </div>
+                <div class="score-card">
+                    <div class="score-val" id="percentage-score">0%</div>
+                    <div class="score-label">Compliance Rate</div>
+                </div>
+            </div>
+
+            <div id="dynamic-report-content">
+                </div>
+
+            <button type="button" class="btn btn-secondary" onclick="window.print()">🖨️ Print / Save as PDF</button>
+            <button type="button" class="btn" style="background: transparent; color: var(--primary); box-shadow: none; border: 2px solid var(--primary);" onclick="resetForm()">Start New Audit</button>
+        </div>
+    </div>
+
+    <script>
+        // Data
+        const institutionsByWilayat = {
+            "Al Mazyunah": ["Andat HC", "Matoura & Jijwal HC", "Tosinat HC", "Mitn HC", "Harwib HC", "Al Mazyunah Hospital"],
+            "Dhalqut": ["Khadrafi HC", "Dalkut HC"],
+            "Mirbat": ["Mirbat Hospital", "Tawi Atayr Hospital"],
+            "Muqshin": ["Muqshin HC", "Al Mashash HC", "Marsodad HC"],
+            "Rakhyut": ["Rakhyut Hospital", "Shahb Asayb HC"],
+            "Sadah": ["Hasik HC", "Hadbin HC", "Sadah Hospital", "Sawb HC"],
+            "Salalah": ["Hijayf HC", "Qayrun Hayriti HC", "Salalah Al Jadidah HC", "Awqad HC", "Al Dahareez HC", "Salalah Al Gharbia HC", "Taitam HC", "As Saadah HC"],
+            "Shalim": ["A' Shuwaymiyah HC", "Sharbthat HC", "Kubut HC", "Dimit Hc", "Shalim Hospital", "Al Hallaniyat HC"],
+            "Taqah": ["Jibjat HC", "Taqah Hospital", "Madinat Al Haqq Hospital"],
+            "Thumrayt": ["Mudayy HC", "Thumrayt Hospital", "Aiboot '2' HC", "Burbazoom HC", "Al Hashman HC", "Bithnah HC", "Dhahbun HC"]
+        };
+
+        const checklistData = [
+            {
+                section: "A. Observation",
+                subsections: [
+                    { title: "Integration of mental health services into general health system", questions: ["The GP is capable of screening patient for mental health problems (5 steps approach flowchart is available)"] },
+                    { title: "Accessing mental health services", questions: ["There is a mental health triage in the psychiatry clinic", "Ambulance vehicle is available for patients' requiring referral to another hospital", "Educational leaflets are available for patients and their families"] },
+                    { title: "Availability of medications and tools", questions: ["Crash trolley is available at the institute and easily accessible", "Haloperidol, promethazine and procyclidine are available in the crash trolley", "Crash trolley is routinely checked and updated", "Wheelchair with restraints is available and easily accessible", "Notification form of side effects of psychotropic drugs are available with pharmacist", "Screening scales for mental health are available at the clinic"] },
+                    { title: "Mechanism of work in the psychiatry clinic", questions: ["Triage room with staff nurse is available", "Psychology clinic is available", "Social worker clinic is available"] },
+                    { title: "Referral System", questions: ["The method of referring patients to psychiatry clinic is clear (Referral flowchart is available)"] },
+                    { title: "Patients' medical record system and documentations", questions: ["All required formats for mental health records are available and activated in (Al-Shifa) system"] },
+                    { title: "Safety action and security", questions: ["The environment is free of harmful objects that can be used by mental ill patients", "The security officer allocated nearby the clinic", "Alarming system e.g. (bell) is available to worker early in case of violent, agitated patients or threatening behavior"] },
+                    { title: "Tele-mental health implication", questions: ["The clinic is equipped with tele-medicine to facilitate communication with patients", "Required equipment’s (Telephone, appointment list, internet, technical support) are available for tele-medicine"] }
+                ]
+            },
+            {
+                section: "B. Enquiry and Interview",
+                subsections: [
+                    { title: "Integration of mental health services", questions: ["The GP is aware of the nearest psychiatry clinic", "The GP in the health facility has been trained on the management of mental disorders in PHC e.g. (5-steps approach program)"] },
+                    { title: "Accessing mental health services", questions: ["The GP is aware of the referral policy"] },
+                    { title: "Availability of tools and medications for intervention", questions: ["All necessary medications-especially first-line treatment are available at the health institute"] },
+                    { title: "Mechanism of work in the psychiatry clinic", questions: ["The triage nurse categorizes patients according to the level of emergency", "The clinic operates by an electronic appointment system", "Continuity of patients’ care is ensured by scheduling the appointment with the same psychiatrist", "The clinic has a system to identify patients who missed their appointments", "Walk-in appointments are considered and accepted", "A reminder alert (SMS/or phone call), is sent prior to the patients allocated appointment"] },
+                    { title: "Referral System", questions: ["Appointments are scheduled based on risk assessment and patient’s condition", "Confirm necessity and appropriateness of referral based on patient’s condition and triage appropriate referrals", "Staff are aware about the referral pathway/flowchart for mental health conditions following mental health guidelines", "Emergency cases require referral are verbally communicated to the psychiatrist/ on-call doctor/Emergency Department staff prior to arrival.", "Patients with alcohol and drug use disorder are stabilized medically before referral to nearest substance misuse unit", "Referrals are being reviewed by psychiatrist prior giving appointments.", "The health care worker escorting patient by ambulance is trained on management of aggressive/violent patient using (de-escalation techniques +/− administer first-line medication)"] },
+                    { title: "Access to medications", questions: ["All psychiatrists are clear about the procedure of referring a patient to collect his/her medications from the nearest health institution"] },
+                    { title: "Patients’ medical record system and documentations", questions: ["Health care workers are aware about confidentiality issues & psychiatric patient rights", "Health care workers are familiar with electronic incidents reports", "Clinic psychologist is using psychologist module in al-Shifa account"] },
+                    { title: "Safety action and security", questions: ["All mental health care workers are certified for “breakaway techniques” course", "Mental health care workers are familiar with the assessment of impending violence and de-escalation techniques."] },
+                    { title: "Tele-mental health implication", questions: ["Staff working in tele-mental health services are aware about documentation process"] },
+                    { title: "Measure the effectiveness of the training program", questions: ["Health care worker is Implementing the mental health guidelines and SOP", "Staff is aware of the unified training package that is prepared primary health care settings.", "Availability of a database for the number of trainees on mental health program"] }
+                ]
+            },
+            {
+                section: "C. Examination of patient’s records",
+                subsections: [
+                    { title: "Patients’ medical record system and documentations", questions: ["Patient’s vitals are always recorded in the patient’s file in every visit", "Psychiatrist, GP’s documentation is clear and sufficient to describe the overall condition of the patient and the management plan"] }
+                ]
+            }
+        ];
+
+        const drugList = [
+            "Clonazepam 0.5mg", "Diazepam 5mg", "Diazepam 5 mg/ ml 2 ml", "Bromazepam 1.5mg",
+            "Buspirone 5mg", "Buspirone 10mg", "Hydroxyzine hydrochloride 10mg", 
+            "Promethazine hydrochloride 10mg", "Promethazine hydrochloride 25 mg",
+            "Propranolol hydrochloride 10mg", "Propranolol hydrochloride 40mg",
+            "Chlorpromazine hcl. 25mg", "Chlorpromazine hydrochloride 100 mg", "Fluphenazine decanoate 25mg/ml. 1ml",
+            "Trifluoperazine 1mg", "Trifluoperazine 5mg", "Flupenthixol dihydrochloride 1mg", "Flupenthixol di-hydrochloride 3mg",
+            "Haloperidol 1.5mg", "Haloperidol 5mg", "Haloperidol 10mg", "Haloperidol 5mg/ml",
+            "Maprotiline hydrochloride 25mg", "Maprotiline hydrochloride 50mg", "Amitriptyline hydrochloride 25mg",
+            "Clomipramine hydrochloride 10mg", "Clomipramine hydrochloride 25mg", "Imipramine hydrochloride 25 mg",
+            "Citalopram 20mg", "Fluoxetine hydrochloride 20 mg", "Paroxetine 20mg"
+        ];
+
+        // Init UI
+        document.addEventListener("DOMContentLoaded", () => {
+            const wilayatSelect = document.getElementById("wilayat");
+            const institutionSelect = document.getElementById("institution");
+
+            wilayatSelect.addEventListener("change", (e) => {
+                const wilayat = e.target.value;
+                institutionSelect.innerHTML = '<option value="">Select Institution...</option>';
+                if (wilayat && institutionsByWilayat[wilayat]) {
+                    institutionsByWilayat[wilayat].forEach(inst => {
+                        institutionSelect.add(new Option(inst, inst));
+                    });
+                }
+            });
+
+            const checklistContainer = document.getElementById("checklist-container");
+            let qIndex = 0;
+
+            checklistData.forEach(section => {
+                const secDiv = document.createElement("div");
+                secDiv.className = "card";
+                secDiv.innerHTML = `<h2 class="section-title">${section.section}</h2>`;
+
+                section.subsections.forEach(sub => {
+                    let html = `<h3 class="subsection-title">${sub.title}</h3><div>`;
+                    sub.questions.forEach(q => {
+                        html += `
+                            <div class="question-row">
+                                <div class="question-text">${q}</div>
+                                <div class="segmented-control">
+                                    <label>
+                                        <input type="radio" name="q${qIndex}" value="2" data-section="${sub.title}" data-question="${q}" checked>
+                                        <span class="segment-btn">Met (2)</span>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="q${qIndex}" value="1" data-section="${sub.title}" data-question="${q}">
+                                        <span class="segment-btn">Partial (1)</span>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="q${qIndex}" value="0" data-section="${sub.title}" data-question="${q}">
+                                        <span class="segment-btn">Not Met (0)</span>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="q${qIndex}" value="NA" data-section="${sub.title}" data-question="${q}">
+                                        <span class="segment-btn">N/A</span>
+                                    </label>
+                                </div>
+                            </div>`;
+                        qIndex++;
+                    });
+                    html += `</div>`;
+                    secDiv.innerHTML += html;
+                });
+                checklistContainer.appendChild(secDiv);
+            });
+
+            const drugsContainer = document.getElementById("drugs-container");
+            drugList.forEach((drug, index) => {
+                drugsContainer.innerHTML += `
+                    <label class="drug-item" for="drug${index}">
+                        <input type="checkbox" id="drug${index}" checked>
+                        <span>${drug}</span>
+                    </label>`;
+            });
+        });
+
+        function generateReport() {
+            const wilayat = document.getElementById("wilayat").value;
+            const institution = document.getElementById("institution").value;
+
+            if (!wilayat || !institution) {
+                alert("Please select both a Wilayat and an Institution.");
+                return;
+            }
+
+            let totalScore = 0;
+            let maxScore = 0;
+            
+            // Smart group structure
+            const improvementCategories = {};
+            let metCount = 0;
+
+            const radios = document.querySelectorAll('input[type="radio"]:checked');
+            
+            radios.forEach(radio => {
+                const value = radio.value;
+                const questionText = radio.getAttribute('data-question');
+                const sectionName = radio.getAttribute('data-section');
+
+                if (value !== "NA") {
+                    maxScore += 2;
+                    totalScore += parseInt(value);
+
+                    if (value === "2") {
+                        metCount++;
+                    } else {
+                        if (!improvementCategories[sectionName]) {
+                            improvementCategories[sectionName] = [];
+                        }
+                        const label = value === "1" ? "Partial" : "Not Met";
+                        improvementCategories[sectionName].push(`<strong>[${label}]</strong> ${questionText}`);
+                    }
+                }
+            });
+
+            const percentage = maxScore === 0 ? 0 : Math.round((totalScore / maxScore) * 100);
+
+            // Update Header Info
+            document.getElementById("report-facility-info").innerText = `${institution} — ${wilayat}, Dhofar Region`;
+            const date = new Date();
+            document.getElementById("report-date").innerText = `Audit Date: ${date.toLocaleDateString()} at ${date.toLocaleTimeString()}`;
+
+            // Update Scores
+            document.getElementById("total-score").innerText = `${totalScore}/${maxScore}`;
+            const pctElement = document.getElementById("percentage-score");
+            pctElement.innerText = `${percentage}%`;
+            pctElement.style.color = percentage >= 80 ? 'var(--success)' : (percentage >= 50 ? 'var(--warning)' : 'var(--danger)');
+
+            // Build Smart Report Body
+            let reportHTML = '';
+            
+            // 1. Show grouped improvements first (priority for action)
+            const categories = Object.keys(improvementCategories);
+            if (categories.length > 0) {
+                reportHTML += `<h2 style="color: var(--danger); margin-bottom: 1rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem;">Opportunities for Improvement</h2>`;
+                categories.forEach(cat => {
+                    reportHTML += `
+                    <div class="report-block">
+                        <h3>Sector: ${cat}</h3>
+                        <ul class="report-list">
+                            ${improvementCategories[cat].map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                    </div>`;
+                });
+            } else {
+                reportHTML += `
+                <div class="report-block excellence">
+                    <h3 style="color: var(--success); margin: 0;">Outstanding Performance</h3>
+                    <p style="margin-top: 0.5rem;">No immediate areas for improvement were identified during this audit. All assessed parameters were met.</p>
+                </div>`;
+            }
+
+            // 2. Summary of Strengths
+            reportHTML += `
+                <div class="report-block excellence" style="margin-top: 2rem;">
+                    <h3 style="color: var(--success);">Areas of Excellence</h3>
+                    <p><strong>${metCount} out of ${maxScore/2}</strong> evaluated standards were fully met, demonstrating strong compliance with standard operating procedures.</p>
+                </div>`;
+
+            document.getElementById("dynamic-report-content").innerHTML = reportHTML;
+
+            // Switch UI View
+            document.getElementById("audit-form").style.display = "none";
+            const reportSection = document.getElementById("report-section");
+            reportSection.style.display = "block";
+            window.scrollTo(0, 0);
+        }
+
+        function resetForm() {
+            document.getElementById("report-section").style.display = "none";
+            document.getElementById("audit-form").style.display = "block";
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>
